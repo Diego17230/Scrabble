@@ -20,9 +20,6 @@ class Cell:
     
     def __repr__(self):
         return f"Coordinates: ({self.x}, {self.y}), Letter: {self.letter}"
-    
-    def __str__(self):
-        return self.letter
 
 
 class Board:
