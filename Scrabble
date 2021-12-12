@@ -50,7 +50,7 @@ class Word:
                 print("Invalid word!")
 
         # Assigns all relevant cells a letter and adds them to a list
-        for x, y, letter in zip(range(start_pos[0], len(word)+1), range(start_pos[1], len(word)+1), word):
+        for x, y, letter in zip(range(start_pos[0], start_pos[0]+len(word)+1), range(start_pos[1], start_pos[1]+len(word)+1), word):
             if direction == "y":
                 # Coordinates is the coordinate of the cell the word covers
                 coordinates = (start_pos[0], y)
