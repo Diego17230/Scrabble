@@ -33,10 +33,7 @@ class Board:
         self.board = board
 
     def __getitem__(self, coordinates):
-        for cell in self.board:
-            if cell.x == coordinates[0] and cell.y == coordinates[1]:
-                return cell
-        #return [cell for cell in self.board if cell.x == coordinates[0] and cell.y == coordinates[1]][0]
+        return [cell for cell in self.board if cell.x == coordinates[0] and cell.y == coordinates[1]][0]
 
 
 class Word:
