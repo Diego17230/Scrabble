@@ -41,8 +41,32 @@ class Board:
 
 
 class Word:
-    def __init__(self, word, ):
-        pass
+    def __init__(self, word, start_pos, direction):
+        self.word = word
+        self.all_points = []
+        with open("words.txt") as all_words:
+            if word.upper() not in [word.strip() for word in all_words.readlines()]:
+                print("Invalid word!")
+
+        for x, y, letter in zip(range(start_pos[0], len(word)+1), range(start_pos[1], len(word)+1), word):
+            if direction == "y":
+                coordinates = (start_pos[0], y)
+            elif direction == "x":
+                coordinates = (x, start_pos[1])
+            else:
+                raise ValueError(f"Direction: {direction} is not valid")
+            self.all_points.append(board[coordinates])
+            if board[coordinates].letter != letter and board[coordinates].letter != "":
+                print("Invalid word!")
+            board[coordinates].letter = letter
+
+        self.value = 0
+        final_multiplier = 1
+        for index, cell in enumerate(self.all_points):
+            self.value += cell.multipliers[0] * letter_values[word[index]]
+            if cell.multipliers[1] > 1:
+                final_multiplier = cell.multipliers[1]
+        self.value *= final_multiplier
 
 
 board = Board()
