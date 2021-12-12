@@ -51,6 +51,9 @@ class Word:
 
         # Assigns all relevant cells a letter and adds them to a list
         for x, y, letter in zip(range(start_pos[0], start_pos[0]+len(word)+1), range(start_pos[1], start_pos[1]+len(word)+1), word):
+            if y > 15 or x > 15:
+                # Makes sure x and y are not outside of the board
+                break
             if direction == "y":
                 # Coordinates is the coordinate of the cell the word covers
                 coordinates = (start_pos[0], y)
