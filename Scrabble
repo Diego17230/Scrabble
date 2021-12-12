@@ -43,7 +43,7 @@ class Board:
 class Word:
     def __init__(self, word, start_pos, direction):
         self.word = word
-        self.all_points = []
+        self.overlap_cells = []
         # Checks if the word is in words.txt
         with open("words.txt") as all_words:
             if word.upper() not in [word.strip() for word in all_words.readlines()]:
@@ -66,7 +66,7 @@ class Word:
         self.value = 0
         final_multiplier = 1
         # Creates a value based on the letters and multipliers
-        for index, cell in enumerate(self.all_points):
+        for index, cell in enumerate(self.overlap_cells):
             self.value += cell.multipliers[0] * letter_values[word[index]]
             if cell.multipliers[1] > 1:
                 # Makes sure there is only one multiplier
