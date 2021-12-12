@@ -30,8 +30,9 @@ class Cell:
 class Board:
     def __init__(self):
         board = [Cell(x,y) for x, y in prod(range(1,16), range(1,16))]
+        self.board = board
         for square in board:
-             if (square.x - 1) % 7 == 0 and (square.y - 1) % 7 == 0 and square != board[8,8]:
+            if (square.x - 1) % 7 == 0 and (square.y - 1) % 7 == 0 and square != self[8,8]:
                 square.word_multiplier = 3
             
 
