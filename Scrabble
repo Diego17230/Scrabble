@@ -44,12 +44,15 @@ class Word:
     def __init__(self, word, start_pos, direction):
         self.word = word
         self.all_points = []
+        # Checks if the word is in words.txt
         with open("words.txt") as all_words:
             if word.upper() not in [word.strip() for word in all_words.readlines()]:
                 print("Invalid word!")
 
+        # Assigns all relevant cells a letter and adds them to a list
         for x, y, letter in zip(range(start_pos[0], len(word)+1), range(start_pos[1], len(word)+1), word):
             if direction == "y":
+                # Coordinates is the coordinate of the cell the word covers
                 coordinates = (start_pos[0], y)
             elif direction == "x":
                 coordinates = (x, start_pos[1])
@@ -62,9 +65,11 @@ class Word:
 
         self.value = 0
         final_multiplier = 1
+        # Creates a value based on the letters and multipliers
         for index, cell in enumerate(self.all_points):
             self.value += cell.multipliers[0] * letter_values[word[index]]
             if cell.multipliers[1] > 1:
+                # Makes sure there is only one multiplier
                 final_multiplier = cell.multipliers[1]
         self.value *= final_multiplier
 
