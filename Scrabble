@@ -29,9 +29,9 @@ class Board:
     def __init__(self):
         board = [Cell(x,y) for x, y in prod(range(1,16), range(1,16))]
         self.board = board
-        for square in board:
-            if (square.x - 1) % 7 == 0 and (square.y - 1) % 7 == 0 and square != self[8,8]:
-                square.multipliers[1] = 3
+        for x,y in prod([1,8,15],[1,8,15]):
+            if self[x,y] != self[8,8]:
+                self[x,y].multipliers[1] = 3
         for n in range(2,6):
             self[n,n].multipliers[1] = self[n,16 - n].multipliers[1] = self[16 - n,n].multipliers[1] = self[16 - n, 16 - n].multipliers[1] = 2
         for x,y in prod([2,6,10,14],[2,6,10,14]):
