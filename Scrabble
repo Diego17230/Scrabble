@@ -1,7 +1,7 @@
 from itertools import product as prod
 from pprint import pprint
 from copy import deepcopy
-letter_values = {'BLANK' : 0,'a':1 , 'b':3, 'c':3, 'd':2, 'e':1, 'f':4, 'g':2, 'h':4, 'i':1, 'j':8, 'k':5, 'l':1, 'm':3, 'n':1, 'o':1, 'p':3, 'q':10, 'r':1, 's':1, 't':1, 'u':1, 'v':8, 'w':4, 'x':8, 'y':4, 'z':10}
+letter_values = {'·' : 0,'a':1 , 'b':3, 'c':3, 'd':2, 'e':1, 'f':4, 'g':2, 'h':4, 'i':1, 'j':8, 'k':5, 'l':1, 'm':3, 'n':1, 'o':1, 'p':3, 'q':10, 'r':1, 's':1, 't':1, 'u':1, 'v':8, 'w':4, 'x':8, 'y':4, 'z':10}
 letter_values = {letter.upper(): num for letter, num in letter_values.items()}
 
 
@@ -29,7 +29,7 @@ class Cell:
             elif self.multipliers[1] > 1:
                 self.letter = f"{self.multipliers[1]+3}"
             else:
-                self.letter = "0"
+                self.letter = "·"
         return self.letter
 
 
