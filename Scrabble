@@ -56,6 +56,9 @@ class Board:
 
 class Word:
     def __init__(self, word, start_pos, direction):
+        for value in start_pos:
+            if value == 0:
+                print("Invalid word! -Out of range-")
         word = word.upper()
         self.word = word
         self.overlap_cells = []
