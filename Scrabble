@@ -22,7 +22,7 @@ class Cell:
         return board[self.x + 1, self.y]
 
     def __repr__(self):
-        if self.letter not in letter_values:
+        if self.letter not in letter_values or self.letter == "·":
             if self.multipliers[0] > 1:
                 self.letter = f"{self.multipliers[0]}"
             elif self.multipliers[1] > 1:
