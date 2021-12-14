@@ -27,8 +27,19 @@ class Cell:
             elif self.multipliers[1] > 1:
                 self.letter = f"{self.multipliers[1]+3}"
             else:
-                self.letter = "·"
-        return self.letter
+                self.letter = "."
+        if self.letter not in (".", "2", "3", "5", "6"):
+                return f"{Fore.MAGENTA}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        elif self.letter == "2":
+            return f"{Fore.CYAN}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        elif self.letter == "3":
+            return f"{Fore.BLUE}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        elif self.letter == "5":
+            return f"{Fore.YELLOW}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        elif self.letter == "6":
+            return f"{Fore.RED}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        else:
+            return self.letter
 
 
 class Board:
