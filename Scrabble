@@ -47,18 +47,18 @@ class Board:
         board = [Cell(x,y) for x, y in prod(range(1,16), range(1,16))]
         self.board = board
         for x,y in prod([1,8,15],[1,8,15]):
-            if self[x,y] != self[8,8]:
-                self[x,y].multipliers[1] = 3
+            self[x,y].multipliers[1] = 3
         for n in range(2,6):
             self[n,n].multipliers[1] = self[n,16 - n].multipliers[1] = self[16 - n,n].multipliers[1] = self[16 - n, 16 - n].multipliers[1] = 2
         for x,y in prod([2,6,10,14],[2,6,10,14]):
-            if self[x,y].multipliers[1] == 1:
+            if self[x,y].multipliers == [1,1]:
                 self[x,y].multipliers[0] = 3
         for x,y in prod([1,4,8,12,15],[1,4,8,12,15]):
-            if self[x,y].multipliers[1] == 1:
+            if self[x,y].multipliers == [1,1]:
                 self[x,y].multipliers[0] = 2
         for n in (7,9):
             self[n,3].multipliers[0] = self[3,n].multipliers[0] = self[n,13].multipliers[0] = self[13,n].multipliers[0] = self[n,n].multipliers[0] = self[n,16 - n].multipliers[0] = 2
+        self[8,8].multipliers = [1,1]
             
 
     def __getitem__(self, coordinates):
