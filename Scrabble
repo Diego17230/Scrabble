@@ -54,12 +54,12 @@ class Board:
         return [cell for cell in self.board if cell.x == coordinates[1] and cell.y == coordinates[0]][0]
     
     def __repr__(self):
-        text = "-------------------------------\n|"
+        text = "  " + "1 2 3 4 5 6 7 8 9 A B C D E F" + "\n1|"
         for i,cell in enumerate(self.board):
-            text += text += f"{cell}|" if cell.letter in (".", "3", "5", "6") else f"\033[31;1;m{cell}\033[0m|"
+            text += f"{cell}|"
             if (i + 1) % 15 == 0:
-                text += "\n|"
-        return text[:-1] + "-------------------------------"
+                text += f"\n{hex((i+1)//15 + 1)[-1].upper()}|"
+        return text[:-3].rstrip()
 
 
 class Word:
