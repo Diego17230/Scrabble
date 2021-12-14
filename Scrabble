@@ -56,7 +56,7 @@ class Board:
     def __repr__(self):
         text = "-------------------------------\n|"
         for i,cell in enumerate(self.board):
-            text += f"{cell}|"
+            text += text += f"{cell}|" if cell.letter in (".", "3", "5", "6") else f"\033[31;1;m{cell}\033[0m|"
             if (i + 1) % 15 == 0:
                 text += "\n|"
         return text[:-1] + "-------------------------------"
