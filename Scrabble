@@ -109,9 +109,11 @@ class Word:
             self.edit_word()
 
     def place(self, preview=False):
+        error = False
         if not any(self.pos):
             # Checks if one of the positions is 0
             print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! Out of range: {self.pos}{Style.RESET_ALL}")
+            error = True
         self.overlap_cells = []
         previous_board = deepcopy(board.board)
 
@@ -127,6 +129,7 @@ class Word:
             self.overlap_cells.append(board[coordinates])
             if board[coordinates].letter != letter and board[coordinates].letter not in ("·", "2", "3", "5", "6"):
                 print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Invalid intersection at {coordinates}-{Style.RESET_ALL}")
+                error = True
                 board.board = previous_board
                 if not preview:
                     return
@@ -135,6 +138,7 @@ class Word:
         if len(self.overlap_cells) != len(self.word):
             board.board = previous_board
             print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Out of range: {self.pos}-{Style.RESET_ALL}")
+            error = True
             if not preview:
                 return
 
@@ -142,23 +146,35 @@ class Word:
         final_multiplier = 1
         # Creates a value based on the letters and multipliers
         for index, cell in enumerate(self.overlap_cells):
-            self.value += cell.multipliers[0] * letter_values[self.word[index]]
-            cell.multipliers = [0, 0]
+            try:
+                self.value += cell.multipliers[0] * letter_values[self.word[index]]
+            except KeyError:
+                (f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Not found in the scrabble dictionary-{Style.RESET_ALL}")
+                error = True
+                board.board = previous_board
+                if not preview:
+                    self.value = 0
+                    return
             if cell.multipliers[1] > 1:
                 # Makes sure there is only one multiplier
                 final_multiplier = cell.multipliers[1]
+            cell.multipliers = [1, 1]
         self.value *= final_multiplier
 
         # Checks if the word is in words.txt
         with open("words.txt") as all_words:
             if self.word not in [word.strip() for word in all_words.readlines()]:
                 print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Not found in the scrabble dictionary-{Style.RESET_ALL}")
+                error = True
                 board.board = previous_board
                 if not preview:
+                    self.value = 0
                     return
 
         if preview:
             print("\nPreview:")
+            if error:
+                self.value = 0
             print(f"Expected word value: {self.value}")
             print(board)
             board.board = deepcopy(previous_board)
