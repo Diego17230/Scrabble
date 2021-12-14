@@ -43,6 +43,11 @@ class Board:
         for x,y in prod([2,6,10,14],[2,6,10,14]):
             if self[x,y].multipliers[1] == 1:
                 self[x,y].multipliers[0] = 3
+        for x,y in prod([1,4,8,12,15],[1,4,8,12,15]):
+            if self[x,y].multipliers[1] == 1:
+                self[x,y].multipliers[0] = 2
+        for n in (7,9):
+            self[n,3].multipliers[0] = self[3,n].multipliers[0] = self[n,13].multipliers[0] = self[13,n].multipliers[0] = self[n,n].multipliers[0] = self[n,16 - n].multipliers[0] = 2
             
 
     def __getitem__(self, coordinates):
