@@ -1,7 +1,7 @@
-from colorama import Fore, Style
 from itertools import product as prod
 from copy import deepcopy
-letter_values = {'BLANK': 0, 'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1, 'F': 4, 'G': 2, 'H': 4, 'I': 1, 'J': 8, 'K': 5, 'L': 1, 'M': 3, 'N': 1, 'O': 1, 'P': 3, 'Q': 10, 'R': 1, 'S': 1, 'T': 1, 'U': 1, 'V': 8, 'W': 4, 'X': 8, 'Y': 4, 'Z': 10}
+from colorama import Fore, Style
+letter_values = {'_': 0, 'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1, 'F': 4, 'G': 2, 'H': 4, 'I': 1, 'J': 8, 'K': 5, 'L': 1, 'M': 3, 'N': 1, 'O': 1, 'P': 3, 'Q': 10, 'R': 1, 'S': 1, 'T': 1, 'U': 1, 'V': 8, 'W': 4, 'X': 8, 'Y': 4, 'Z': 10, "·": 0}
 
 
 class Cell:
@@ -10,7 +10,7 @@ class Cell:
         self.y = y
         # Value one is letter, value two is word
         self.multipliers = [1, 1]
-        self.letter = "."
+        self.letter = "·"
 
     def up(self):
         return board[self.x, self.y + 1]
@@ -20,7 +20,7 @@ class Cell:
         return board[self.x - 1, self.y]
     def right(self):
         return board[self.x + 1, self.y]
-    
+
     def __repr__(self):
         if self.letter not in letter_values:
             if self.multipliers[0] > 1:
@@ -28,9 +28,10 @@ class Cell:
             elif self.multipliers[1] > 1:
                 self.letter = f"{self.multipliers[1]+3}"
             else:
-                self.letter = "."
-        if self.letter not in (".", "2", "3", "5", "6"):
-                return f"{Fore.MAGENTA}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+                self.letter = "·"
+
+        if self.letter not in ("·", "2", "3", "5", "6"):
+            return f"{Fore.MAGENTA}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
         elif self.letter == "2":
             return f"{Fore.CYAN}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
         elif self.letter == "3":
@@ -39,6 +40,8 @@ class Cell:
             return f"{Fore.YELLOW}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
         elif self.letter == "6":
             return f"{Fore.RED}{Style.BRIGHT}{self.letter}{Style.RESET_ALL}"
+        elif self == board[8,8] and self.multipliers == [1,1]:
+            return f"{Fore.GREEN}{Style.BRIGHT}★{Style.RESET_ALL}"
         else:
             return self.letter
 
@@ -60,14 +63,13 @@ class Board:
         for n in (7,9):
             self[n,3].multipliers[0] = self[3,n].multipliers[0] = self[n,13].multipliers[0] = self[13,n].multipliers[0] = self[n,n].multipliers[0] = self[n,16 - n].multipliers[0] = 2
         self[8,8].multipliers = [1,1]
-            
 
     def __getitem__(self, coordinates):
         return [cell for cell in self.board if cell.x == coordinates[1] and cell.y == coordinates[0]][0]
-    
+
     def __repr__(self):
         text = "  " + "1 2 3 4 5 6 7 8 9 A B C D E F" + "\n1|"
-        for i,cell in enumerate(self.board):
+        for i, cell in enumerate(self.board):
             text += f"{cell}|"
             if (i + 1) % 15 == 0:
                 text += f"\n{hex((i+1)//15 + 1)[-1].upper()}|"
@@ -76,49 +78,105 @@ class Board:
 
 class Word:
     def __init__(self, word, start_pos, direction):
-        for value in start_pos:
-            if value == 0:
-                print("Invalid word! -Out of range-")
-        word = word.upper()
-        self.word = word
+        self.word = word.upper()
+        self.pos = start_pos
+        self.direction = direction
+        self.place(True)
+        self.edit_word()
+
+    def edit_word(self):
+        place = input(f"Confirm placement for {self.word}? y/n \n")
+        if place == "n":
+            options = input("Do you want to rotate (r), change position (p), change word (w), or cancel (x) this word? \n")
+            if options == "r":
+                if self.direction == "y":
+                    self.rotate("x")
+                else:
+                    self.rotate("y")
+            elif options == "p":
+                xy = input("What xy position, seperate by space. ").split()
+                self.change_pos(int(xy[0]), int(xy[1]))
+            elif options == "w":
+                self.change_word(input("What is your new word? \n"))
+            elif options == "x":
+                del self
+                return
+            self.edit_word()
+        elif place == "y":
+            self.place()
+        else:
+            print("Invalid input!")
+            self.edit_word()
+
+    def place(self, preview=False):
+        if not any(self.pos):
+            # Checks if one of the positions is 0
+            print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! Out of range: {self.pos}{Style.RESET_ALL}")
         self.overlap_cells = []
         previous_board = deepcopy(board.board)
-        # Checks if the word is in words.txt
-        with open("words.txt") as all_words:
-            if word not in [word.strip() for word in all_words.readlines()]:
-                print("Invalid word! Not found in the scrabble dictionary")
 
         # Assigns all relevant cells a letter and adds them to a list
-        for x, y, letter in zip(range(start_pos[0], start_pos[0]+len(word)+1), range(start_pos[1], start_pos[1]+len(word)+1), word):
+        for x, y, letter in zip(range(self.pos[0], self.pos[0]+len(self.word)+1), range(self.pos[1], self.pos[1]+len(self.word)+1), self.word):
             if y > 15 or x > 15:
                 break
-            if direction == "y":
+            if self.direction == "y":
                 # Coordinates is the coordinate of the cell the word covers
-                coordinates = (start_pos[0], y)
-            elif direction == "x":
-                coordinates = (x, start_pos[1])
+                coordinates = (self.pos[0], y)
             else:
-                raise ValueError(f"Direction: {direction} is not valid")
+                coordinates = (x, self.pos[1])
             self.overlap_cells.append(board[coordinates])
-            if board[coordinates].letter != letter and board[coordinates].letter != ".":
-                print("Invalid word! Invalid intersection")
+            if board[coordinates].letter != letter and board[coordinates].letter not in ("·", "2", "3", "5", "6"):
+                print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Invalid intersection at {coordinates}-{Style.RESET_ALL}")
+                board.board = previous_board
+                if not preview:
+                    return
+                break
             board[coordinates].letter = letter
-        if len(self.overlap_cells) != len(word):
+        if len(self.overlap_cells) != len(self.word):
             board.board = previous_board
-            print("Invalid word! Out of range")
+            print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Out of range: {self.pos}-{Style.RESET_ALL}")
+            if not preview:
+                return
 
         self.value = 0
         final_multiplier = 1
         # Creates a value based on the letters and multipliers
         for index, cell in enumerate(self.overlap_cells):
-            self.value += cell.multipliers[0] * letter_values[word[index]]
+            self.value += cell.multipliers[0] * letter_values[self.word[index]]
+            cell.multipliers = [0, 0]
             if cell.multipliers[1] > 1:
                 # Makes sure there is only one multiplier
                 final_multiplier = cell.multipliers[1]
         self.value *= final_multiplier
 
+        # Checks if the word is in words.txt
+        with open("words.txt") as all_words:
+            if self.word not in [word.strip() for word in all_words.readlines()]:
+                print(f"\n{Fore.RED}{Style.BRIGHT}Invalid word! -Not found in the scrabble dictionary-{Style.RESET_ALL}")
+                board.board = previous_board
+                if not preview:
+                    return
+
+        if preview:
+            print("\nPreview:")
+            print(f"Expected word value: {self.value}")
+            print(board)
+            board.board = deepcopy(previous_board)
+
+    def rotate(self, xy: str):
+        self.direction = xy
+        self.place(True)
+
+    def change_pos(self, x: int, y: int):
+        self.pos = (x, y)
+        self.place(True)
+    
+    def change_word(self, word: str):
+        self.word = word.upper()
+        self.place(True)
+
 
 board = Board()
 test_word = Word("hello", (1, 1), "x")
-print(test_word.value)
+test_word2 = Word("hi", (10, 10), "x")
 print(board)
