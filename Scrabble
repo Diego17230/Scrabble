@@ -66,7 +66,10 @@ class Word:
                     self.rotate("y")
             elif options == "p":
                 xy = input("What xy position, seperate by space. ").split()
-                self.change_pos(int(xy[0]), int(xy[1]))
+                try:
+                    self.change_pos(int(xy[0]), int(xy[1]))
+                except ValueError:
+                    self.change_pos(15, 15)
             elif options == "w":
                 self.change_word(input("What is your new word? \n"))
             elif options == "x":
